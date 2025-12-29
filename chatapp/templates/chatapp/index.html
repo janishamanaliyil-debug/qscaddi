@@ -52,29 +52,64 @@
             </div>
 
             <!-- Input Area -->
-            <div class="input-container">
-                <div class="file-preview" id="filePreview"></div>
-                <div class="input-wrapper">
-                    <input type="file" id="fileInput" style="display: none;" multiple>
-                    <button class="file-input-btn" onclick="document.getElementById('fileInput').click()">
-                        <i class="bi bi-plus-lg"></i>
-                    </button>
-                    <textarea 
-                        class="message-input" 
-                        id="messageInput" 
-                        placeholder="Type your message here..."
-                        rows="1"
-                    ></textarea>
-                    <button class="send-btn" id="sendBtn" disabled>
-                        <i class="bi bi-send-fill"></i>
-                    </button>
+                
+             
+                <div class="input-container">
+                    <!-- <div class="file-preview" id="filePreview"></div>
+                    <div class="input-wrapper">
+                        <input type="file"  name="file" id="fileInput" style="display: none;" multiple>
+                        <button class="file-input-btn" onclick="document.getElementById('fileInput').click()">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                        <textarea 
+                            class="message-input" 
+                            id="messageInput" 
+                            placeholder="Type your message here..."
+                            rows="1">
+                        </textarea>
+                       
+                        <button class="send-btn" id="sendBtn" type="submit">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
+                    </div> -->
+                    <form id="fileUploadForm" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="input-container">
+        <div class="file-preview" id="filePreview"></div>
+        <div class="input-wrapper">
+            <!-- Hidden file input -->
+            <input type="file" name="files" id="fileInput" style="display: none;" multiple>
+            
+            <!-- Plus button to select files -->
+            <button type="button" class="file-input-btn" onclick="fileInput.click()">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+            
+            <!-- Message input -->
+            <textarea 
+                class="message-input" 
+                id="messageInput" 
+                placeholder="Type your message here..."
+                rows="1"></textarea>
+            
+            <!-- Send button -->
+            <button class="send-btn" id="sendBtn" type="submit">
+                <i class="bi bi-send-fill"></i>
+            </button>
+        </div>
+    </div>
+</form>
+
                 </div>
-            </div>
+           
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <!-- custom js -->
      <script src="{% static 'script/index.js' %}"></script>
+ 
+
+
 </body>
 </html>
