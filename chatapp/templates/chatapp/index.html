@@ -4,36 +4,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Chat Interface</title>
+    <title>QS Copilot</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- custom css -->
-     <link rel="stylesheet" href="{% static 'style/index.css' %}">
+    <link rel="stylesheet" href="{% static 'style/index.css' %}">
 </head>
 <body>
     <div class="app-container">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-icon active">
-                <i class="bi bi-chat-dots"></i>
+        <div class="sidebar" id="sidebar">
+            <!-- Home Icon -->
+            <div class="sidebar-icon" data-tooltip="Home">
+                <i class="bi bi-house"></i>
             </div>
-            <div class="sidebar-icon">
-                <i class="bi bi-search"></i>
+            
+            <!-- Project Icon with Submenu -->
+            <div class="sidebar-icon has-submenu" data-tooltip="Project" id="projectIcon">
+                <i class="bi bi-buildings"></i>
             </div>
-            <div class="sidebar-icon">
-                <i class="bi bi-folder"></i>
+            
+            <!-- Building Icon -->
+            <div class="sidebar-icon" data-tooltip="Building">
+                <i class="bi bi-building"></i>
             </div>
-            <div class="sidebar-icon">
+            
+            <!-- Settings Icon -->
+            <div class="sidebar-icon" data-tooltip="Settings">
                 <i class="bi bi-gear"></i>
             </div>
-            <div class="sidebar-icon">
-                <i class="bi bi-bell"></i>
+            
+            <!-- Rulers Icon -->
+            <div class="sidebar-icon" data-tooltip="Rulers">
+                <i class="bi bi-rulers"></i>
             </div>
             
             <div class="sidebar-bottom">
-                <div class="user-avatar">
+                <!-- User Avatar -->
+                <div class="user-avatar" data-tooltip="Account">
                     <i class="bi bi-person"></i>
                 </div>
+            </div>
+        </div>
+
+        <!-- Project Submenu (Pre-Contract & Post-Contract) -->
+        <div class="submenu-panel" id="projectSubmenu">
+            <div class="submenu-header">Project</div>
+            
+            <!-- Pre-Contract -->
+            <div class="submenu-item has-nested" id="preContractItem">
+                <i class="bi bi-folder"></i>
+                <span>Pre-Contract</span>
+                <i class="bi bi-chevron-right submenu-arrow"></i>
+            </div>
+            
+            <!-- Post-Contract -->
+            <div class="submenu-item has-nested" id="postContractItem">
+                <i class="bi bi-folder-check"></i>
+                <span>Post-Contract</span>
+                <i class="bi bi-chevron-right submenu-arrow"></i>
+            </div>
+        </div>
+
+        <!-- Pre-Contract Nested Submenu -->
+        <div class="submenu-panel nested-submenu" id="preContractSubmenu">
+            <div class="submenu-header">Pre-Contract</div>
+            <div class="submenu-item">
+                <i class="bi bi-file-text"></i>
+                <span>CD</span>
+            </div>
+            <div class="submenu-item">
+                <i class="bi bi-file-text"></i>
+                <span>SD</span>
+            </div>
+            <div class="submenu-item">
+                <i class="bi bi-file-text"></i>
+                <span>DD</span>
+            </div>
+            <div class="submenu-item">
+                <i class="bi bi-file-text"></i>
+                <span>IFC</span>
+            </div>
+            <div class="submenu-item">
+                <i class="bi bi-clipboard-data"></i>
+                <span>Tender Analysis</span>
+            </div>
+        </div>
+
+        <!-- Post-Contract Nested Submenu -->
+        <div class="submenu-panel nested-submenu" id="postContractSubmenu">
+            <div class="submenu-header">Post-Contract</div>
+            <div class="submenu-item">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                <span>IPC's</span>
+            </div>
+            <div class="submenu-item">
+                <i class="bi bi-file-earmark-diff"></i>
+                <span>VO's</span>
+            </div>
+            <div class="submenu-item">
+                <i class="bi bi-calculator"></i>
+                <span>Final Account</span>
             </div>
         </div>
 
@@ -41,75 +111,54 @@
         <div class="main-content">
             <!-- Header -->
             <div class="header">
-                <div class="app-name">Qscaddi</div>
+                <div class="app-name">QS Copilot</div>
             </div>
 
             <!-- Center Greeting -->
-            <div class="center-greeting" id="centerGreeting">Hello, Alex</div>
+            <div class="center-greeting" id="centerGreeting">Hi</div>
 
             <!-- Chat Area -->
             <div class="chat-area" id="chatArea">
+                <!-- File Upload Section (Hidden by default) -->
+                <div class="upload-section" id="uploadSection" style="display: none;">
+                    <h3 class="upload-title">Upload Your Drawings</h3>
+                    <div class="drag-drop-zone" id="dragDropZone">
+                        <i class="bi bi-cloud-upload"></i>
+                        <p>Drag & Drop files here</p>
+                        <p class="upload-hint">or click to browse</p>
+                        <input type="file" id="tenderFileInput" multiple accept=".pdf,.xlsx,.xls,.png,.jpg,.jpeg,.gif" style="display: none;">
+                    </div>
+                    
+                    <!-- Uploaded Files Preview -->
+                    <div class="uploaded-files-grid" id="uploadedFilesGrid"></div>
+                </div>
             </div>
 
             <!-- Input Area -->
-                
-             
-                <div class="input-container">
-                    <!-- <div class="file-preview" id="filePreview"></div>
+            <div class="input-container">
+                <form id="fileUploadForm" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="file-preview" id="filePreview"></div>
                     <div class="input-wrapper">
-                        <input type="file"  name="file" id="fileInput" style="display: none;" multiple>
-                        <button class="file-input-btn" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" name="files" id="fileInput" style="display: none;" multiple>
+                        <button type="button" class="file-input-btn" onclick="document.getElementById('fileInput').click()">
                             <i class="bi bi-plus-lg"></i>
                         </button>
                         <textarea 
                             class="message-input" 
                             id="messageInput" 
-                            placeholder="Type your message here..."
-                            rows="1">
-                        </textarea>
-                       
+                            placeholder="Ask me..."
+                            rows="1"></textarea>
                         <button class="send-btn" id="sendBtn" type="submit">
                             <i class="bi bi-send-fill"></i>
                         </button>
-                    </div> -->
-                    <form id="fileUploadForm" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="input-container">
-        <div class="file-preview" id="filePreview"></div>
-        <div class="input-wrapper">
-            <!-- Hidden file input -->
-            <input type="file" name="files" id="fileInput" style="display: none;" multiple>
-            
-            <!-- Plus button to select files -->
-            <button type="button" class="file-input-btn" onclick="fileInput.click()">
-                <i class="bi bi-plus-lg"></i>
-            </button>
-            
-            <!-- Message input -->
-            <textarea 
-                class="message-input" 
-                id="messageInput" 
-                placeholder="Type your message here..."
-                rows="1"></textarea>
-            
-            <!-- Send button -->
-            <button class="send-btn" id="sendBtn" type="submit">
-                <i class="bi bi-send-fill"></i>
-            </button>
-        </div>
-    </div>
-</form>
-
-                </div>
-           
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <!-- custom js -->
-     <script src="{% static 'script/index.js' %}"></script>
- 
-
-
+    <script src="{% static 'script/index.js' %}"></script>
 </body>
 </html>
