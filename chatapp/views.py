@@ -18,3 +18,6 @@ def index(request):
         return JsonResponse({'message': message, 'files': file_urls})
     return render(request,'chatapp/index.html')
 
+def Login(request):
+    return render(request,'chatapp/login.html')
+

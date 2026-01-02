@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QS Copilot - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        /* Background Gradient */
+        body {
+            /* background: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%); */
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Main Card */
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        /* Left Side Illustration */
+        .illustration-side {
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 50px;
+        }
+
+        .circle-bg {
+            width: 250px;
+            height: 250px;
+            background: #f1f3f5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        /* Hover Animation */
+        .illustration-side:hover .circle-bg {
+            transform: translateY(-15px);
+        }
+
+        /* CSS Laptop */
+        .laptop-body {
+            width: 120px;
+            height: 80px;
+            background: #343a40;
+            border-radius: 5px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .laptop-body::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            width: 140px;
+            height: 6px;
+            background: #ced4da;
+            border-radius: 0 0 5px 5px;
+        }
+
+        /* Form Styling */
+        .form-control {
+            background-color: #e9ecef;
+            border: none;
+            padding: 12px 15px 12px 40px;
+            border-radius: 25px;
+        }
+
+        .input-group-text {
+            background: transparent;
+            border: none;
+            position: absolute;
+            z-index: 10;
+            padding-left: 15px;
+            padding-top: 13px;
+            color: #6c757d;
+        }
+
+        .btn-login {
+            background-color: #57b846;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            background-color: #333;
+            color: white;
+        }
+
+        .links {
+            font-size: 0.85rem;
+            color: #6c757d;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row login-card mx-auto">
+        <div class="col-md-6 illustration-side d-none d-md-flex">
+            <div class="circle-bg">
+                <div class="laptop-body">
+                    <i class="bi bi-person text-white fs-1"></i>
+                </div>
+            </div>
+            <div style="position:absolute; top:20%; left:20%; color:#57b846"><i class="bi bi-triangle"></i></div>
+            <div style="position:absolute; bottom:20%; right:20%; color:#00bcd4"><i class="bi bi-circle"></i></div>
+        </div>
+
+        <div class="col-md-6 p-5">
+            <h3 class="text-center fw-bold mb-4">Member Login</h3>
+            
+            <form>
+                <div class="mb-3 position-relative">
+                    <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                    <input type="email" class="form-control" placeholder="Email">
+                </div>
+
+                <div class="mb-4 position-relative">
+                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                    <input type="password" class="form-control" placeholder="Password">
+                </div>
+
+                <button type="submit" class="btn btn-login w-100 mb-3">LOGIN</button>
+
+                <!-- <div class="text-center">
+                    <a href="#" class="links">Forgot Username / Password?</a>
+                </div> -->
+
+                <div class="text-center mt-5">
+                    <a href="#" class="links fw-bold">Create your Account <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

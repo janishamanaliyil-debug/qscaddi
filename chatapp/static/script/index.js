@@ -1,6 +1,14 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    
+    // ====================== //
+    // PREVENT DEFAULT LINK BEHAVIOUR
+    // ====================== //
+    // document.addEventListener('click', function (e) {
+    //     const link = e.target.closest('a.app-link');
+    //     if (!link) return;
+    //     e.preventDefault();
+    // });
+
     // ====================== //
     // ELEMENT REFERENCES    //
     // ====================== //
@@ -21,6 +29,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const postContractItem = document.getElementById('postContractItem');
     const preContractSubmenu = document.getElementById('preContractSubmenu');
     const postContractSubmenu = document.getElementById('postContractSubmenu');
+
+    const accountIcon = document.getElementById('accountIcon');
+    const accountSubmenu = document.getElementById('accountSubmenu');
     
     // Tender Analysis Upload elements
     const uploadSection = document.getElementById('uploadSection');
@@ -48,7 +59,35 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Toggle Account submenu on click on the bottom
+
+    accountIcon.addEventListener('click', () => {
+
+        const iconRect = accountIcon.getBoundingClientRect();
+
+        // Disable top positioning from CSS
+        accountSubmenu.style.top = 'auto';
+
+        // Calculate bottom position relative to icon
+        let bottomOffset =
+            window.innerHeight - iconRect.bottom - 10;
+
+        // Safety: prevent off-screen
+        if (bottomOffset < 20) bottomOffset = 20;
+
+        accountSubmenu.style.bottom = bottomOffset + 'px';
+
+        accountSubmenu.classList.toggle('active');
+
+        // Close other submenus
+        projectSubmenu.classList.remove('active');
+        preContractSubmenu.classList.remove('active');
+        postContractSubmenu.classList.remove('active');
+    });
+
     
+   
     // Show Pre-Contract nested submenu on HOVER
     if (preContractItem) {
         preContractItem.addEventListener('mouseenter', function(e) {
@@ -120,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (projectSubmenu) projectSubmenu.classList.remove('active');
             if (preContractSubmenu) preContractSubmenu.classList.remove('active');
             if (postContractSubmenu) postContractSubmenu.classList.remove('active');
+            if (accountSubmenu) accountSubmenu.classList.remove('active');
         }
     });
     

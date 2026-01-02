@@ -1,11 +1,17 @@
-{% extends "chatapp/base.html" %}
 {% load static %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'style/index.css' %}">
-{% endblock %}
-
-{% block body %}
- <div class="app-container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QS Copilot</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style/index.css' %}">
+    <link rel="stylesheet" href="{% static 'style/base.css' %}">
+</head>
+<body>
+    <div class="app-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <!-- Home Icon -->
@@ -173,9 +179,8 @@
             </div>
         </div>
     </div>
-{% endblock %}
 
-
-{% block extra_js %}
-<script src="{% static 'script/index.js' %}"></script>
-{% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'script/index.js' %}"></script>
+</body>
+</html>
