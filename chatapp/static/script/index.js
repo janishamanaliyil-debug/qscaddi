@@ -20,9 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const folderByYear = document.getElementById('folderByYear');
     const addNew = document.getElementById('addNew');
     const yearSubmenu = document.getElementById('yearSubmenu');
-    const project1Item = document.getElementById('project1Item');
-    const project2Item = document.getElementById('project2Item');
+    // const projectSubmenuHeader = projectSubmenu.querySelector('.submenu-header');
+    // const project1Item = document.getElementById('project1Item');
+    // const project2Item = document.getElementById('project2Item');
+    // const projectWrapper = document.getElementById('projectWrapper');
     const projectSubmenu = document.getElementById('projectSubmenu');
+    const projectSubmenuHeader =projectSubmenu?.querySelector('.submenu-header');
     const preContractItem = document.getElementById('preContractItem');
     const postContractItem = document.getElementById('postContractItem');
     const preContractSubmenu = document.getElementById('preContractSubmenu');
@@ -54,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Close nested submenus when main submenu closes
             if (!projectMainmenu.classList.contains('active')) {
                 yearSubmenu.classList.remove('active');
+                projectSubmenu.classList.remove('active');
                 preContractSubmenu.classList.remove('active');
                 postContractSubmenu.classList.remove('active');
             }
@@ -73,24 +77,42 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('active');
         });
     }
+    // Handle ANY project item
+    document.querySelectorAll('#yearSubmenu .submenu-item.has-nested')
+    .forEach(projectItem => {
 
+        const openProject = () => {
+            const projectName =
+                projectItem.dataset.projectName ||
+                projectItem.querySelector('span')?.textContent ||
+                'Project';
+
+            projectSubmenu.classList.add('active');
+            preContractSubmenu.classList.remove('active');
+            postContractSubmenu.classList.remove('active');
+            projectSubmenuHeader.textContent = projectName;
+        };
+
+        projectItem.addEventListener('mouseenter', openProject);
+        projectItem.addEventListener('click', openProject);
+    });
     // Show Project Submenu on HOVER over Project 1
-    if (project1Item) {
-        project1Item.addEventListener('mouseenter', function(e) {
-            projectSubmenu.classList.add('active');
-            preContractSubmenu.classList.remove('active');
-            postContractSubmenu.classList.remove('active');
-        });
-    }
+    // if (project1Item) {
+    //     project1Item.addEventListener('mouseenter', function(e) {
+    //         projectSubmenu.classList.add('active');
+    //         preContractSubmenu.classList.remove('active');
+    //         postContractSubmenu.classList.remove('active');
+    //     });
+    // }
 
-    // Show Project Submenu on HOVER over Project 2
-    if (project2Item) {
-        project2Item.addEventListener('mouseenter', function(e) {
-            projectSubmenu.classList.add('active');
-            preContractSubmenu.classList.remove('active');
-            postContractSubmenu.classList.remove('active');
-        });
-    }
+    // // Show Project Submenu on HOVER over Project 2
+    // if (project2Item) {
+    //     project2Item.addEventListener('mouseenter', function(e) {
+    //         projectSubmenu.classList.add('active');
+    //         preContractSubmenu.classList.remove('active');
+    //         postContractSubmenu.classList.remove('active');
+    //     });
+    // }
 
     // Keep project submenu open when hovering over it
     if (projectSubmenu) {
@@ -98,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('active');
         });
     }
-
+  
     // Show Pre-Contract nested submenu on HOVER
     if (preContractItem) {
         preContractItem.addEventListener('mouseenter', function(e) {
@@ -116,17 +138,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Keep nested submenus open when hovering over them
-    if (preContractSubmenu) {
-        preContractSubmenu.addEventListener('mouseenter', function() {
-            this.classList.add('active');
-        });
-    }
+    // if (preContractSubmenu) {
+    //     preContractSubmenu.addEventListener('mouseenter', function() {
+    //         this.classList.add('active');
+    //     });
+    // }
     
-    if (postContractSubmenu) {
-        postContractSubmenu.addEventListener('mouseenter', function() {
-            this.classList.add('active');
-        });
-    }
+    // if (postContractSubmenu) {
+    //     postContractSubmenu.addEventListener('mouseenter', function() {
+    //         this.classList.add('active');
+    //     });
+    // }
     
     // Close year submenu when mouse leaves
     if (projectMainmenu) {
@@ -142,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+ 
 
     // Close year submenu and its children when mouse leaves
     if (yearSubmenu) {
@@ -281,6 +304,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // ====================== //
     
     function showTenderUploadSection() {
+        console.log('=== Showing Tender Upload Section ===');
+        
         // Hide center greeting
         if (centerGreeting) {
             centerGreeting.classList.add('hidden');
@@ -309,6 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         chatArea.appendChild(newUploadSection);
         
+        console.log('Upload section created. Checking if it exists:', document.getElementById('uploadSection') !== null);
+        
         // Re-attach event listeners for the new elements
         setupTenderUploadListeners();
         
@@ -316,6 +343,12 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedFiles = [];
         if (filePreview) {
             filePreview.innerHTML = '';
+        }
+        
+        // IMPORTANT: Update send button state to disabled after clearing files
+        if (sendBtn) {
+            sendBtn.disabled = true;
+            console.log('Send button disabled after clearing files');
         }
         
         // Close all menus
@@ -331,8 +364,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const newDragDropZone = document.getElementById('dragDropZone');
         
         if (newDragDropZone && fileInput) {
+            console.log('Setting up tender upload listeners');
+            
             // Click to browse files - USE THE SAME FILE INPUT AT BOTTOM
             newDragDropZone.addEventListener('click', function() {
+                console.log('Drag zone clicked, opening file browser');
                 fileInput.click();
             });
             
@@ -358,6 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
             newDragDropZone.addEventListener('drop', function(e) {
                 const dt = e.dataTransfer;
                 const files = dt.files;
+                console.log('Files dropped:', files.length);
                 handleFileSelection(files);
             }, false);
         }
@@ -365,22 +402,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // UNIFIED file handling function for BOTH inputs
     function handleFileSelection(files) {
+        console.log('=== handleFileSelection called ===');
+        console.log('Files received:', files.length);
+        
         const filesArray = Array.from(files);
         selectedFiles.push(...filesArray);
         displayFilePreview();
         
+        console.log('Total selected files:', selectedFiles.length);
+        
+        // Check if we're in tender analysis mode
+        const uploadSectionElement = document.getElementById('uploadSection');
+        const isInTenderMode = uploadSectionElement !== null;
+        
+        console.log('Is in Tender Mode:', isInTenderMode);
+        console.log('Send button exists:', sendBtn !== null);
+        
         // Enable send button if files are uploaded
         if (sendBtn && selectedFiles.length > 0) {
             sendBtn.disabled = false;
+            console.log('✓ Send button ENABLED - Files:', selectedFiles.length);
+        } else if (sendBtn) {
+            console.log('✗ Send button NOT enabled - Files:', selectedFiles.length);
+        } else {
+            console.log('✗ Send button element not found!');
         }
         
-        // If we're in tender analysis mode and files are uploaded, enable send button
-        const uploadSectionElement = document.getElementById('uploadSection');
-        if (uploadSectionElement && selectedFiles.length > 0) {
-            if (sendBtn) {
-                sendBtn.disabled = false;
-            }
-        }
+        console.log('=== handleFileSelection end ===');
     }
     
     // Drag and Drop functionality - Initial setup
@@ -469,11 +517,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // FILE HANDLING         //
     // ====================== //
     
-    // Handle file selection
+    // Handle file selection from the main file input
     if (fileInput) {
         fileInput.addEventListener('change', function(e) {
+            console.log('=== File input changed ===');
+            console.log('Files selected:', e.target.files.length);
+            
             selectedFiles = Array.from(e.target.files);
             displayFilePreview();
+            
+            // Check if in tender mode and update button accordingly
+            const uploadSectionElement = document.getElementById('uploadSection');
+            const isInTenderMode = uploadSectionElement !== null;
+            
+            console.log('Is in Tender Mode:', isInTenderMode);
+            console.log('File count:', selectedFiles.length);
+            
+            if (sendBtn) {
+                if (isInTenderMode && selectedFiles.length > 0) {
+                    sendBtn.disabled = false;
+                    console.log('✓ Send button ENABLED (Tender mode with files)');
+                } else if (!isInTenderMode && selectedFiles.length > 0) {
+                    sendBtn.disabled = false;
+                    console.log('✓ Send button ENABLED (Normal mode with files)');
+                } else {
+                    console.log('Send button state unchanged');
+                }
+            }
         });
     }
     
@@ -506,6 +576,18 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedFiles.splice(index, 1);
         displayFilePreview();
         
+        // Update send button state after removing file
+        const uploadSectionElement = document.getElementById('uploadSection');
+        const isInTenderMode = uploadSectionElement !== null;
+        
+        if (sendBtn) {
+            if (isInTenderMode) {
+                sendBtn.disabled = selectedFiles.length === 0;
+            } else {
+                sendBtn.disabled = selectedFiles.length === 0 && messageInput.value.trim() === '';
+            }
+        }
+        
         // Reset file input
         if (fileInput) {
             fileInput.value = '';
@@ -526,6 +608,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const uploadSectionElement = document.getElementById('uploadSection');
             const isInTenderMode = uploadSectionElement !== null;
             
+            console.log('Message input - Tender mode:', isInTenderMode, 'Files:', selectedFiles.length, 'Message:', this.value.trim().length);
+            
             // Enable/disable send button
             if (sendBtn) {
                 if (isInTenderMode) {
@@ -535,6 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // In normal mode, enable if files OR message exists
                     sendBtn.disabled = selectedFiles.length === 0 && this.value.trim() === '';
                 }
+                console.log('Send button disabled:', sendBtn.disabled);
             }
         });
         
@@ -573,6 +658,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const uploadSectionElement = document.getElementById('uploadSection');
             const isInTenderMode = uploadSectionElement !== null; 
             
+            console.log('=== Form Submit ===');
+            console.log('Tender mode:', isInTenderMode);
+            console.log('Files:', selectedFiles.length);
+            console.log('Message:', message);
+            
             if (isInTenderMode){
                 // Handle tender analysis submission
                 if (selectedFiles.length === 0 && message === '') {
@@ -582,6 +672,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Use automatic message if no message is typed
                 const finalMessage = message || 'Tender Analysis';
+                
+                console.log('Final message:', finalMessage);
                 
                 // IMMEDIATELY remove upload section from DOM
                 if (uploadSectionElement && uploadSectionElement.parentNode) {
