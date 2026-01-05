@@ -1,14 +1,6 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // ====================== //
-    // PREVENT DEFAULT LINK BEHAVIOUR
-    // ====================== //
-    // document.addEventListener('click', function (e) {
-    //     const link = e.target.closest('a.app-link');
-    //     if (!link) return;
-    //     e.preventDefault();
-    // });
-
+    
     // ====================== //
     // ELEMENT REFERENCES    //
     // ====================== //
@@ -24,15 +16,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Sidebar menu elements
     const projectIcon = document.getElementById('projectIcon');
+    const projectMainmenu = document.getElementById('projectMainmenu');
+    const folderByYear = document.getElementById('folderByYear');
+    const addNew = document.getElementById('addNew');
+    const yearSubmenu = document.getElementById('yearSubmenu');
+    const project1Item = document.getElementById('project1Item');
+    const project2Item = document.getElementById('project2Item');
     const projectSubmenu = document.getElementById('projectSubmenu');
     const preContractItem = document.getElementById('preContractItem');
     const postContractItem = document.getElementById('postContractItem');
     const preContractSubmenu = document.getElementById('preContractSubmenu');
     const postContractSubmenu = document.getElementById('postContractSubmenu');
+    const addProjectBtn = document.getElementById('addProjectBtn');
 
     const accountIcon = document.getElementById('accountIcon');
     const accountSubmenu = document.getElementById('accountSubmenu');
-    
+
     // Tender Analysis Upload elements
     const uploadSection = document.getElementById('uploadSection');
     const dragDropZone = document.getElementById('dragDropZone');
@@ -46,48 +45,60 @@ document.addEventListener('DOMContentLoaded', function() {
     // SIDEBAR MENU HANDLING //
     // ====================== //
     
-    // Toggle Project submenu on click
+    // Toggle Project main menu on click
     if (projectIcon) {
         projectIcon.addEventListener('click', function(e) {
             e.stopPropagation();
-            projectSubmenu.classList.toggle('active');
+            projectMainmenu.classList.toggle('active');
             
             // Close nested submenus when main submenu closes
-            if (!projectSubmenu.classList.contains('active')) {
+            if (!projectMainmenu.classList.contains('active')) {
+                yearSubmenu.classList.remove('active');
                 preContractSubmenu.classList.remove('active');
                 postContractSubmenu.classList.remove('active');
             }
         });
     }
 
-    // Toggle Account submenu on click on the bottom
+    // Show Year Submenu (2026) on HOVER over "2026"
+    if (folderByYear) {
+        folderByYear.addEventListener('mouseenter', function(e) {
+            yearSubmenu.classList.add('active');
+        });
+    }
 
-    accountIcon.addEventListener('click', () => {
+    // Keep year submenu open when hovering over it
+    if (yearSubmenu) {
+        yearSubmenu.addEventListener('mouseenter', function() {
+            this.classList.add('active');
+        });
+    }
 
-        const iconRect = accountIcon.getBoundingClientRect();
+    // Show Project Submenu on HOVER over Project 1
+    if (project1Item) {
+        project1Item.addEventListener('mouseenter', function(e) {
+            projectSubmenu.classList.add('active');
+            preContractSubmenu.classList.remove('active');
+            postContractSubmenu.classList.remove('active');
+        });
+    }
 
-        // Disable top positioning from CSS
-        accountSubmenu.style.top = 'auto';
+    // Show Project Submenu on HOVER over Project 2
+    if (project2Item) {
+        project2Item.addEventListener('mouseenter', function(e) {
+            projectSubmenu.classList.add('active');
+            preContractSubmenu.classList.remove('active');
+            postContractSubmenu.classList.remove('active');
+        });
+    }
 
-        // Calculate bottom position relative to icon
-        let bottomOffset =
-            window.innerHeight - iconRect.bottom - 10;
+    // Keep project submenu open when hovering over it
+    if (projectSubmenu) {
+        projectSubmenu.addEventListener('mouseenter', function() {
+            this.classList.add('active');
+        });
+    }
 
-        // Safety: prevent off-screen
-        if (bottomOffset < 20) bottomOffset = 20;
-
-        accountSubmenu.style.bottom = bottomOffset + 'px';
-
-        accountSubmenu.classList.toggle('active');
-
-        // Close other submenus
-        projectSubmenu.classList.remove('active');
-        preContractSubmenu.classList.remove('active');
-        postContractSubmenu.classList.remove('active');
-    });
-
-    
-   
     // Show Pre-Contract nested submenu on HOVER
     if (preContractItem) {
         preContractItem.addEventListener('mouseenter', function(e) {
@@ -117,17 +128,52 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Close nested submenus when mouse leaves both the main menu and nested menu
-    if (projectSubmenu) {
-        projectSubmenu.addEventListener('mouseleave', function(e) {
-            // Check if mouse is not entering a nested submenu
+    // Close year submenu when mouse leaves
+    if (projectMainmenu) {
+        projectMainmenu.addEventListener('mouseleave', function(e) {
+            const relatedTarget = e.relatedTarget;
+            if (!relatedTarget || !relatedTarget.closest('#yearSubmenu')) {
+                setTimeout(() => {
+                    yearSubmenu.classList.remove('active');
+                    projectSubmenu.classList.remove('active');
+                    preContractSubmenu.classList.remove('active');
+                    postContractSubmenu.classList.remove('active');
+                }, 100);
+            }
+        });
+    }
+
+    // Close year submenu and its children when mouse leaves
+    if (yearSubmenu) {
+        yearSubmenu.addEventListener('mouseleave', function(e) {
             const relatedTarget = e.relatedTarget;
             if (!relatedTarget || 
-                (!relatedTarget.closest('#preContractSubmenu') && 
+                (!relatedTarget.closest('#projectMainmenu') && 
+                 !relatedTarget.closest('#projectSubmenu') &&
+                 !relatedTarget.closest('#preContractSubmenu') && 
                  !relatedTarget.closest('#postContractSubmenu'))) {
                 setTimeout(() => {
-                    if (preContractSubmenu) preContractSubmenu.classList.remove('active');
-                    if (postContractSubmenu) postContractSubmenu.classList.remove('active');
+                    this.classList.remove('active');
+                    projectSubmenu.classList.remove('active');
+                    preContractSubmenu.classList.remove('active');
+                    postContractSubmenu.classList.remove('active');
+                }, 100);
+            }
+        });
+    }
+
+    // Close project submenu and its children when mouse leaves
+    if (projectSubmenu) {
+        projectSubmenu.addEventListener('mouseleave', function(e) {
+            const relatedTarget = e.relatedTarget;
+            if (!relatedTarget || 
+                (!relatedTarget.closest('#yearSubmenu') &&
+                 !relatedTarget.closest('#preContractSubmenu') && 
+                 !relatedTarget.closest('#postContractSubmenu'))) {
+                setTimeout(() => {
+                    this.classList.remove('active');
+                    preContractSubmenu.classList.remove('active');
+                    postContractSubmenu.classList.remove('active');
                 }, 100);
             }
         });
@@ -151,11 +197,47 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Handle Add Project Button Click
+    if (addProjectBtn) {
+        addProjectBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            alert('Add New Project functionality will be implemented here');
+            // You can add your project creation logic here
+        });
+    }
+
+    // Toggle Account submenu on click
+    accountIcon.addEventListener('click', () => {
+        const iconRect = accountIcon.getBoundingClientRect();
+
+        // Disable top positioning from CSS
+        accountSubmenu.style.top = 'auto';
+
+        // Calculate bottom position relative to icon
+        let bottomOffset = window.innerHeight - iconRect.bottom - 10;
+
+        // Safety: prevent off-screen
+        if (bottomOffset < 20) bottomOffset = 20;
+
+        accountSubmenu.style.bottom = bottomOffset + 'px';
+
+        accountSubmenu.classList.toggle('active');
+
+        // Close other submenus
+        projectMainmenu.classList.remove('active');
+        yearSubmenu.classList.remove('active');
+        projectSubmenu.classList.remove('active');
+        preContractSubmenu.classList.remove('active');
+        postContractSubmenu.classList.remove('active');
+    });
     
     // Close all menus when clicking outside
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.sidebar') && 
             !e.target.closest('.submenu-panel')) {
+            if (projectMainmenu) projectMainmenu.classList.remove('active');
+            if (yearSubmenu) yearSubmenu.classList.remove('active');
             if (projectSubmenu) projectSubmenu.classList.remove('active');
             if (preContractSubmenu) preContractSubmenu.classList.remove('active');
             if (postContractSubmenu) postContractSubmenu.classList.remove('active');
@@ -191,9 +273,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Add your functionality here for other menu items
-            // Example: 
-            // if (itemName === 'CD') { loadCDPage(); }
-            // if (itemName === "IPC's") { loadIPCPage(); }
         });
     });
     
@@ -240,6 +319,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Close all menus
+        if (projectMainmenu) projectMainmenu.classList.remove('active');
+        if (yearSubmenu) yearSubmenu.classList.remove('active');
         if (projectSubmenu) projectSubmenu.classList.remove('active');
         if (preContractSubmenu) preContractSubmenu.classList.remove('active');
         if (postContractSubmenu) postContractSubmenu.classList.remove('active');
@@ -292,6 +373,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (sendBtn && selectedFiles.length > 0) {
             sendBtn.disabled = false;
         }
+        
+        // If we're in tender analysis mode and files are uploaded, enable send button
+        const uploadSectionElement = document.getElementById('uploadSection');
+        if (uploadSectionElement && selectedFiles.length > 0) {
+            if (sendBtn) {
+                sendBtn.disabled = false;
+            }
+        }
     }
     
     // Drag and Drop functionality - Initial setup
@@ -337,110 +426,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function preventDefaults(e) {
         e.preventDefault();
         e.stopPropagation();
-    }
-    
-    function handleTenderFiles(files) {
-        const filesArray = Array.from(files);
-        
-        // UNCOMMENT BELOW TO ADD FILE SIZE LIMIT (e.g., 10MB per file)
-        // const maxSize = 10 * 1024 * 1024; // 10MB in bytes
-        // const oversizedFiles = filesArray.filter(file => file.size > maxSize);
-        // if (oversizedFiles.length > 0) {
-        //     alert(`Some files exceed the 10MB limit: ${oversizedFiles.map(f => f.name).join(', ')}`);
-        //     return;
-        // }
-        
-        // UNCOMMENT BELOW TO ADD FILE COUNT LIMIT (e.g., max 10 files)
-        // const maxFiles = 10;
-        // if (tenderFiles.length + filesArray.length > maxFiles) {
-        //     alert(`You can only upload up to ${maxFiles} files at a time.`);
-        //     return;
-        // }
-        
-        // Add files to tender files array
-        tenderFiles.push(...filesArray);
-        
-        // Display thumbnails in the upload section
-        displayTenderFiles();
-        
-        // Keep upload section visible so user can type message
-        // Enable send button if files are uploaded
-        if (sendBtn && tenderFiles.length > 0) {
-            sendBtn.disabled = false;
-        }
-        
-        // Reset file input
-        const input = document.getElementById('tenderFileInput');
-        if (input) {
-            input.value = '';
-        }
-    }
-    
-    function displayTenderFiles() {
-        const grid = document.getElementById('uploadedFilesGrid');
-        if (!grid) return;
-        
-        grid.innerHTML = '';
-        
-        tenderFiles.forEach((file, index) => {
-            const fileDiv = document.createElement('div');
-            fileDiv.className = 'file-thumbnail';
-            
-            // Check if file is an image
-            const isImage = file.type.startsWith('image/');
-            
-            if (isImage) {
-                // Create image thumbnail
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    fileDiv.innerHTML = `
-                        <img src="${e.target.result}" alt="${file.name}" class="file-thumbnail-image">
-                        <div class="file-thumbnail-info">
-                            <div class="file-thumbnail-name" title="${file.name}">${file.name}</div>
-                            <div class="file-thumbnail-size">${formatFileSize(file.size)}</div>
-                        </div>
-                        <div class="file-thumbnail-remove" data-index="${index}">
-                            <i class="bi bi-x"></i>
-                        </div>
-                    `;
-                    
-                    // Add remove functionality
-                    fileDiv.querySelector('.file-thumbnail-remove').addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        removeTenderFile(parseInt(this.getAttribute('data-index')));
-                    });
-                };
-                reader.readAsDataURL(file);
-            } else {
-                // Create icon thumbnail for non-image files
-                const icon = getFileIcon(file.name);
-                fileDiv.innerHTML = `
-                    <div class="file-thumbnail-icon">
-                        <i class="bi ${icon}"></i>
-                    </div>
-                    <div class="file-thumbnail-info">
-                        <div class="file-thumbnail-name" title="${file.name}">${file.name}</div>
-                        <div class="file-thumbnail-size">${formatFileSize(file.size)}</div>
-                    </div>
-                    <div class="file-thumbnail-remove" data-index="${index}">
-                        <i class="bi bi-x"></i>
-                    </div>
-                `;
-                
-                // Add remove functionality
-                fileDiv.querySelector('.file-thumbnail-remove').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    removeTenderFile(parseInt(this.getAttribute('data-index')));
-                });
-            }
-            
-            grid.appendChild(fileDiv);
-        });
-    }
-    
-    function removeTenderFile(index) {
-        tenderFiles.splice(index, 1);
-        displayTenderFiles();
     }
     
     function getFileIcon(filename) {
@@ -537,9 +522,19 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
             
+            // Check if we're in tender analysis mode
+            const uploadSectionElement = document.getElementById('uploadSection');
+            const isInTenderMode = uploadSectionElement !== null;
+            
             // Enable/disable send button
             if (sendBtn) {
-                sendBtn.disabled = selectedFiles.length === 0 && this.value.trim() === '';
+                if (isInTenderMode) {
+                    // In tender mode, enable if files are uploaded (regardless of message)
+                    sendBtn.disabled = selectedFiles.length === 0;
+                } else {
+                    // In normal mode, enable if files OR message exists
+                    sendBtn.disabled = selectedFiles.length === 0 && this.value.trim() === '';
+                }
             }
         });
         
@@ -547,8 +542,21 @@ document.addEventListener('DOMContentLoaded', function() {
         messageInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                if (selectedFiles.length > 0 || this.value.trim() !== '') {
-                    fileUploadForm.dispatchEvent(new Event('submit'));
+                
+                // Check if we're in tender analysis mode
+                const uploadSectionElement = document.getElementById('uploadSection');
+                const isInTenderMode = uploadSectionElement !== null;
+                
+                if (isInTenderMode) {
+                    // In tender mode, allow submit if files are uploaded
+                    if (selectedFiles.length > 0) {
+                        fileUploadForm.dispatchEvent(new Event('submit'));
+                    }
+                } else {
+                    // In normal mode, require files OR message
+                    if (selectedFiles.length > 0 || this.value.trim() !== '') {
+                        fileUploadForm.dispatchEvent(new Event('submit'));
+                    }
                 }
             }
         });
@@ -562,75 +570,81 @@ document.addEventListener('DOMContentLoaded', function() {
             const message = messageInput.value.trim();
             
             // Check if we're in tender analysis mode
-            // const isInTenderMode = uploadSection && uploadSection.style.display === 'block';
-            
-            // if (isInTenderMode) {
-            //     // Handle tender analysis submission
-            //     if (tenderFiles.length === 0 && message === '') {
-            //         alert('Please upload at least one file or type a message');
-            //         return;
-            //     }
-                
-            //     // Hide upload section and reset chat area styling
-            //     uploadSection.style.display = 'none';
-            //     uploadSection.style.display = 'none';
-            //     if (chatArea) {
-            //         chatArea.style.justifyContent = 'flex-start';
-            //         chatArea.style.alignItems = 'flex-start';
-            //     }
-                
-            //     // Display user message with files in chat
-            //     displayTenderMessage(tenderFiles, message);
-                
-            //     // Show loading indicator
-            //     showLoadingIndicator();
-                
-            //     // Simulate server response (replace with actual server call)
-            //     setTimeout(() => {
-            //         hideLoadingIndicator();
-            //         displayBotResponse('Thank you! I have received your tender documents and will analyze them shortly.');
-            //     }, 2000);
-                
-            //     // Clear tender files
-            //     tenderFiles = [];
-                
-            // }
-            // Check if we're in tender analysis mode
             const uploadSectionElement = document.getElementById('uploadSection');
             const isInTenderMode = uploadSectionElement !== null; 
+            
             if (isInTenderMode){
                 // Handle tender analysis submission
                 if (selectedFiles.length === 0 && message === '') {
                     alert('Please upload at least one file or type a message');
                     return;
                 }
+                
+                // Use automatic message if no message is typed
+                const finalMessage = message || 'Tender Analysis';
+                
                 // IMMEDIATELY remove upload section from DOM
                 if (uploadSectionElement && uploadSectionElement.parentNode) {
                     uploadSectionElement.parentNode.removeChild(uploadSectionElement);
                 }
+                
                 // Reset chat area styling
                 if (chatArea) {
                     chatArea.style.justifyContent = 'flex-start';
                     chatArea.style.alignItems = 'flex-start';
                 }
+                
                 // Display user message with files in chat
-                displayUserMessage(selectedFiles, message);
-                selectedFiles = [];
+                displayUserMessage(selectedFiles, finalMessage);
+                
                 // Scroll to bottom
                 if (chatArea) {
                     chatArea.scrollTop = chatArea.scrollHeight;
                 }
-                    // Show loading indicator
+                
+                // Show loading indicator
                 showLoadingIndicator();
                 
-                // Simulate server response
-                setTimeout(() => {
+                // SEND TO SERVER FOR TENDER ANALYSIS
+                const formData = new FormData();
+                formData.append('message', finalMessage);
+                formData.append('upload_source', 'tender_analysis');
+                
+                selectedFiles.forEach(file => {
+                    formData.append('files', file);
+                });
+                
+                // Get CSRF token
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                    
+                // Send to server
+                fetch("", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": csrfToken ? csrfToken.value : ''
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log('Tender analysis upload successful:', data);
                     hideLoadingIndicator();
-                    const fileCount = selectedFiles.length;
-                    const fileText = fileCount === 1 ? 'file' : 'files';
-                    // displayBotResponse(`Thank you! I have received your ${fileCount} ${fileText} and will analyze them shortly.`);
-                }, 2000);
-
+                    
+                    // Display bot response
+                    if (data.response) {
+                        displayBotResponse(data.response);
+                    } else {
+                        displayBotResponse('Thank you! I have received your files and will analyze them shortly.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    hideLoadingIndicator();
+                    displayBotResponse('Error uploading files. Please try again.');
+                });
+                
+                // Clear files
+                selectedFiles = [];
             }
             else {
                 // Handle regular message submission
@@ -699,13 +713,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 fileInput.value = '';
             }
         });
-    }
-    
-    // Display tender analysis message with files
-    function displayTenderMessage(files, text) {
-        // This function is no longer needed - we use displayUserMessage instead
-        // Keeping it for backward compatibility but redirecting to displayUserMessage
-        displayUserMessage(files, text);
     }
     
     // Display regular user message
@@ -777,34 +784,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Helper functions
-    function getFileIcon(filename) {
-        const ext = filename.split('.').pop().toLowerCase();
-        switch(ext) {
-            case 'pdf':
-                return 'bi-file-pdf-fill';
-            case 'xlsx':
-            case 'xls':
-                return 'bi-file-excel-fill';
-            case 'doc':
-            case 'docx':
-                return 'bi-file-word-fill';
-            default:
-                return 'bi-file-earmark';
-        }
-    }
-    
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    }
-    
     // Initialize send button state
     if (sendBtn && messageInput) {
         sendBtn.disabled = messageInput.value.trim() === '';
     }
-    
 });

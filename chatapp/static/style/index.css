@@ -22,8 +22,7 @@ body {
 
 .sidebar {
     width: 70px;
-    /* background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); */
-    background: linear-gradient(180deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+    background: linear-gradient(180deg, var(--primary-gradient-start, #667eea) 0%, var(--primary-gradient-end, #764ba2) 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -125,7 +124,7 @@ body {
     background: white;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transition: transform .3s ease;
     z-index: 9;
     overflow-y: auto;
     padding: 20px 0;
@@ -140,9 +139,24 @@ body {
     visibility: visible;
 }
 
+/* First level nested submenu (Year submenu - shows Projects) */
 .submenu-panel.nested-submenu {
     left: 320px;
     z-index: 8;
+    top: 80px;
+}
+
+/* Second level nested submenu (Project submenu - shows Pre/Post Contract) */
+.submenu-panel.nested-submenu-level-2 {
+    left: 570px;
+    z-index: 7;
+    top: 80px;
+}
+
+/* Third level nested submenu (Pre-Contract and Post-Contract options) */
+.submenu-panel.nested-submenu-level-3 {
+    left: 820px;
+    z-index: 6;
     top: 80px;
 }
 
@@ -156,6 +170,49 @@ body {
     padding: 0 20px 15px;
     border-bottom: 2px solid #e8ecf1;
     margin-bottom: 10px;
+}
+
+/* Header with action button (for add project button) */
+.submenu-header-with-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 15px;
+    border-bottom: 2px solid #e8ecf1;
+    margin-bottom: 10px;
+}
+
+.submenu-header-text {
+    font-size: 18px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.add-project-btn {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.add-project-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.add-project-btn:active {
+    transform: translateY(0);
 }
 
 .submenu-item {
@@ -197,6 +254,7 @@ body {
     transform: translateX(3px);
     color: #667eea;
 }
+
 /* ====================== */
 /* remove default link styles */
 a.app-link {

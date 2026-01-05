@@ -41,9 +41,51 @@
             </div>
         </div>
 
-        <!-- Project Submenu (Pre-Contract & Post-Contract) -->
-        <div class="submenu-panel" id="projectSubmenu">
+        <!-- Project Main Menu (Year Selection) -->
+        <div class="submenu-panel" id="projectMainmenu">
             <div class="submenu-header">Project</div>
+            
+            <!-- Year Folder -->
+            <div class="submenu-item has-nested" id="folderByYear">
+                <i class="bi bi-calendar"></i>
+                <span>2026</span>
+                <i class="bi bi-chevron-right submenu-arrow"></i>
+            </div>
+            
+            <div class="submenu-item has-nested" id="addNew">
+                <i class="bi bi-file-plus"></i>
+                <span>Add New</span>
+                <i class="bi bi-chevron-right submenu-arrow"></i>
+            </div>
+        </div>
+
+        <!-- Year Submenu (Project List) -->
+        <div class="submenu-panel nested-submenu" id="yearSubmenu">
+            <div class="submenu-header-with-action">
+                <span class="submenu-header-text">2026</span>
+                <button class="add-project-btn" id="addProjectBtn" title="Add New Project">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </div>
+            
+            <!-- Project 1 -->
+            <div class="submenu-item has-nested" id="project1Item">
+                <i class="bi bi-folder2"></i>
+                <span>Project 1</span>
+                <i class="bi bi-chevron-right submenu-arrow"></i>
+            </div>
+            
+            <!-- Project 2 -->
+            <div class="submenu-item has-nested" id="project2Item">
+                <i class="bi bi-folder2"></i>
+                <span>Project 2</span>
+                <i class="bi bi-chevron-right submenu-arrow"></i>
+            </div>
+        </div>
+
+        <!-- Project Submenu (Pre-Contract & Post-Contract) -->
+        <div class="submenu-panel nested-submenu-level-2" id="projectSubmenu">
+            <div class="submenu-header">Projects</div>
             
             <!-- Pre-Contract -->
             <div class="submenu-item has-nested" id="preContractItem">
@@ -61,7 +103,7 @@
         </div>
 
         <!-- Pre-Contract Nested Submenu -->
-        <div class="submenu-panel nested-submenu" id="preContractSubmenu">
+        <div class="submenu-panel nested-submenu-level-2" id="preContractSubmenu">
             <div class="submenu-header">Pre-Contract</div>
             <div class="submenu-item">
                 <i class="bi bi-file-text"></i>
@@ -86,7 +128,7 @@
         </div>
 
         <!-- Post-Contract Nested Submenu -->
-        <div class="submenu-panel nested-submenu" id="postContractSubmenu">
+        <div class="submenu-panel nested-submenu-level-2" id="postContractSubmenu">
             <div class="submenu-header">Post-Contract</div>
             <div class="submenu-item">
                 <i class="bi bi-file-earmark-bar-graph"></i>
@@ -136,7 +178,7 @@
             <!-- Chat Area -->
             <div class="chat-area" id="chatArea">
                 <!-- File Upload Section (Hidden by default) -->
-                <div class="upload-section" id="uploadSection" style="display: none;">
+                <div class="upload-section" id="uploadSection" style="display: none;" data-tender="true">
                     <h3 class="upload-title">Upload Your Drawings</h3>
                     <div class="drag-drop-zone" id="dragDropZone">
                         <i class="bi bi-cloud-upload"></i>
@@ -177,5 +219,4 @@
 
 
 {% block extra_js %}
-<script src="{% static 'script/index.js' %}"></script>
 {% endblock %}
