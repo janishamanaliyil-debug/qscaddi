@@ -51,12 +51,6 @@
                 <span>2026</span>
                 <i class="bi bi-chevron-right submenu-arrow"></i>
             </div>
-            
-            <!-- <div class="submenu-item has-nested" id="addNew">
-                <i class="bi bi-file-plus"></i>
-                <span>Add New</span>
-                <i class="bi bi-chevron-right submenu-arrow"></i>
-            </div> -->
         </div>
 
         <!-- Year Submenu (Project List) -->
@@ -82,6 +76,7 @@
                 <i class="bi bi-chevron-right submenu-arrow"></i>
             </div>
         </div>
+
         <!-- Project Submenu (Pre-Contract & Post-Contract) -->
         <div class="submenu-panel nested-submenu-level-2" id="projectSubmenu">
             <div class="submenu-header">Project</div>
@@ -176,19 +171,7 @@
 
             <!-- Chat Area -->
             <div class="chat-area" id="chatArea">
-                <!-- File Upload Section (Hidden by default) -->
-                <div class="upload-section" id="uploadSection" style="display: none;" data-tender="true">
-                    <h3 class="upload-title">Upload Your Drawings</h3>
-                    <div class="drag-drop-zone" id="dragDropZone">
-                        <i class="bi bi-cloud-upload"></i>
-                        <p>Drag & Drop files here</p>
-                        <p class="upload-hint">or click to browse</p>
-                        <input type="file" id="tenderFileInput" multiple accept=".pdf,.xlsx,.xls,.png,.jpg,.jpeg,.gif" style="display: none;">
-                    </div>
-                    
-                    <!-- Uploaded Files Preview -->
-                    <div class="uploaded-files-grid" id="uploadedFilesGrid"></div>
-                </div>
+                <!-- Tender upload section will be dynamically created here -->
             </div>
 
             <!-- Input Area -->
@@ -216,6 +199,10 @@
     </div>
 {% endblock %}
 
-
 {% block extra_js %}
+<script>
+    // Define the tender analysis URL from Django
+    const TENDER_ANALYSIS_URL = "{% url 'chatapp:tender_analysis' %}";
+</script>
+<script src="{% static 'js/index.js' %}"></script>
 {% endblock %}

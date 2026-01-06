@@ -4,6 +4,7 @@ app_name = 'chatapp'
 
 urlpatterns = [
     path('',views.index,name='index'),
-    path('login/',views.Login,name='login')
+    path('login/',views.Login,name='login'),
+    path('tender-analysis/', views.tender_analysis, name='tender_analysis'),
    
 ]
