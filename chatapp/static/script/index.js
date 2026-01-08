@@ -1,8 +1,6 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Get the tender analysis URL from Django template
-    
     // ====================== //
     // ELEMENT REFERENCES    //
     // ====================== //
@@ -35,6 +33,34 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedFiles = [];
     
     // ====================== //
+    // HELPER FUNCTIONS      //
+    // ====================== //
+    
+    /**
+     * Position submenu relative to parent element
+     * @param {HTMLElement} submenu - The submenu to position
+     * @param {HTMLElement} parentElement - The element that triggered the submenu
+     */
+    function positionSubmenu(submenu, parentElement) {
+        if (!submenu || !parentElement) return;
+        
+        const rect = parentElement.getBoundingClientRect();
+        const submenuHeight = submenu.offsetHeight;
+        const windowHeight = window.innerHeight;
+        
+        // Calculate desired top position (aligned with parent)
+        let topPosition = rect.top;
+        
+        // Check if submenu would go off-screen at the bottom
+        if (topPosition + submenuHeight > windowHeight - 20) {
+            // Adjust to fit within viewport
+            topPosition = Math.max(20, windowHeight - submenuHeight - 20);
+        }
+        
+        submenu.style.top = topPosition + 'px';
+    }
+    
+    // ====================== //
     // SIDEBAR MENU HANDLING //
     // ====================== //
     
@@ -53,9 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Show Year Submenu on HOVER
+    // Show Year Submenu on HOVER with dynamic positioning
     if (folderByYear) {
         folderByYear.addEventListener('mouseenter', function(e) {
+            positionSubmenu(yearSubmenu, this);
             yearSubmenu.classList.add('active');
         });
     }
@@ -66,16 +93,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle ANY project item
+    // Handle ANY project item with dynamic positioning
     document.querySelectorAll('#yearSubmenu .submenu-item.has-nested').forEach(projectItem => {
         const openProject = () => {
             const projectName = projectItem.dataset.projectName || 
                                projectItem.querySelector('span')?.textContent || 
                                'Project';
 
+            // Position the project submenu relative to the clicked project item
+            positionSubmenu(projectSubmenu, projectItem);
+            
             projectSubmenu.classList.add('active');
             preContractSubmenu.classList.remove('active');
             postContractSubmenu.classList.remove('active');
+            
             if (projectSubmenuHeader) {
                 projectSubmenuHeader.textContent = projectName;
             }
@@ -91,15 +122,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Pre-Contract item with dynamic positioning
     if (preContractItem) {
         preContractItem.addEventListener('mouseenter', function(e) {
+            positionSubmenu(preContractSubmenu, this);
             preContractSubmenu.classList.add('active');
             postContractSubmenu.classList.remove('active');
         });
     }
     
+    // Post-Contract item with dynamic positioning
     if (postContractItem) {
         postContractItem.addEventListener('mouseenter', function(e) {
+            positionSubmenu(postContractSubmenu, this);
             postContractSubmenu.classList.add('active');
             preContractSubmenu.classList.remove('active');
         });
@@ -179,6 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Account icon with dynamic positioning
     accountIcon.addEventListener('click', () => {
         const iconRect = accountIcon.getBoundingClientRect();
         accountSubmenu.style.top = 'auto';
