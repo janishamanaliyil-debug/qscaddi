@@ -118,7 +118,7 @@ body {
 .submenu-panel {
     position: fixed;
     left: 70px;
-    top: 80px; /* Default fallback */
+    top: 20px; /* Default fallback */
     width: 250px;
     max-height: calc(100vh - 160px);
     background: white;

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QSCoPilot</title>
+  <style>
+    body {
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:#f7f9fc;
+      display:flex;
+      flex-direction:column;
+      height:100vh;
+      color:#1a1a1a;
+    }
+
+    /* Context Bar */
+    .context-bar {
+      background:#181c30;
+      color:white;
+      padding:12px 20px;
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:20px;
+      border-bottom:2px solid #272c45;
+    }
+
+    .context-item {
+      display:flex;
+      flex-direction:column;
+    }
+
+    .context-label {
+      font-size:11px;
+      opacity:0.7;
+    }
+
+    /* Main Layout */
+    .main {
+      flex:1;
+      display:flex;
+      overflow:hidden;
+    }
+
+    /* Chat Section */
+    .chat-section {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      border-right:1px solid #d6d9e1;
+    }
+
+    .chat-area {
+      flex:1;
+      padding:20px;
+      overflow-y:auto;
+    }
+
+    .message {
+      padding:12px 14px;
+      margin-bottom:12px;
+      border-radius:6px;
+      max-width:75%;
+      font-size:14px;
+    }
+
+    .from-user {
+      background:#e1e9ff;
+      margin-left:auto;
+    }
+
+    .from-system {
+      background:#f1f3f7;
+      margin-right:auto;
+    }
+
+    /* Command Line Input */
+    .command-input {
+      display:flex;
+      border-top:1px solid #d6d9e1;
+      padding:14px;
+      gap:10px;
+      background:#fff;
+    }
+
+    .command-input textarea {
+      flex:1;
+      resize:none;
+      border:1px solid #c7ccdb;
+      border-radius:6px;
+      padding:10px;
+      font-size:14px;
+      height:42px;
+      outline:none;
+    }
+
+    .command-input button {
+      background:#5064d8;
+      color:white;
+      border:none;
+      padding:0 20px;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:14px;
+    }
+
+    /* Upload Panel */
+    .upload-panel {
+      width:260px;
+      background:#fafbff;
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      border-left:1px solid #d6d9e1;
+    }
+
+    .upload-title {
+      font-weight:600;
+      margin-bottom:12px;
+      font-size:14px;
+    }
+
+    .upload-category {
+      margin-bottom:18px;
+    }
+
+    .upload-category span {
+      display:block;
+      font-size:12px;
+      opacity:0.7;
+      margin-bottom:6px;
+    }
+
+    .upload-box {
+      border:1px dashed #a9b0c3;
+      border-radius:6px;
+      padding:20px;
+      text-align:center;
+      font-size:12px;
+      cursor:pointer;
+      background:#fff;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Context Bar -->
+  <div class="context-bar">
+    <div class="context-item">
+      <span class="context-label">Project</span>
+      <strong>Dubai Mall Extension</strong>
+    </div>
+    <div class="context-item">
+      <span class="context-label">Stage</span>
+      <strong>Tender Analysis</strong>
+    </div>
+    <div class="context-item">
+      <span class="context-label">Template</span>
+      <strong>BOQ Breakdown v2</strong>
+    </div>
+    <div class="context-item">
+      <span class="context-label">Status</span>
+      <strong>Active</strong>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- Chat Section -->
+    <div class="chat-section">
+      <div class="chat-area" id="chatArea">
+        <div class="message from-system">Welcome to QSCoPilot. Start working by entering a task or uploading documents.</div>
+      </div>
+      <div class="command-input">
+        <textarea placeholder="Enter a professional command, e.g. 'Break down BOQ by trade'" id="command"></textarea>
+        <button onclick="sendMessage()">Execute</button>
+      </div>
+    </div>
+
+    <!-- Upload Panel -->
+    <div class="upload-panel">
+      <div class="upload-title">Upload Documents</div>
+
+      <div class="upload-category">
+        <span>Drawings / Models</span>
+        <div class="upload-box">Upload PDFs, DWGs, IFC, CAD</div>
+      </div>
+
+      <div class="upload-category">
+        <span>BOQs / Schedules</span>
+        <div class="upload-box">Upload XLSX, CSV</div>
+      </div>
+
+      <div class="upload-category">
+        <span>Templates</span>
+        <div class="upload-box">Upload DOCX, XLSX</div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById("command");
+      const chatArea = document.getElementById("chatArea");
+
+      if (input.value.trim() === "") return;
+
+      const msg = document.createElement("div");
+      msg.className = "message from-user";
+      msg.innerText = input.value;
+      chatArea.appendChild(msg);
+
+      input.value = "";
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+  </script>
+
+</body>
+</html>
