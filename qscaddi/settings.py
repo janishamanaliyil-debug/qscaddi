@@ -86,12 +86,24 @@ WSGI_APPLICATION = 'qscaddi.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(
+        'postgresql://qscaddi_db_user:ScKgjUq0D2FXxXI5wNzQt39ENVv1NK7P@dpg-d5jk0t15pdvs739gffhg-a/qscaddi_db',
+        # conn_max_age=600,
+        # ssl_require=False  # Set to True in production
+    )
 }
+
+# internal = postgresql://qscaddi_db_user:ScKgjUq0D2FXxXI5wNzQt39ENVv1NK7P@dpg-d5jk0t15pdvs739gffhg-a/qscaddi_db
+# ext =  postgresql://qscaddi_db_user:ScKgjUq0D2FXxXI5wNzQt39ENVv1NK7P@dpg-d5jk0t15pdvs739gffhg-a.oregon-postgres.render.com/qscaddi_db
+# # DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 #  "default": dj_database_url.parse(
 #         DATABASE_URL,
 #         conn_max_age=600,
