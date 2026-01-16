@@ -2,124 +2,6 @@
 {% load static %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'style/index.css' %}">
-<style>
-/* Additional styles for chat messages */
-.chat-message {
-    margin: 15px 0;
-    padding: 12px 16px;
-    border-radius: 12px;
-    max-width: 70%;
-    word-wrap: break-word;
-}
-
-.user-message {
-    background: #007bff;
-    color: white;
-    margin-left: auto;
-    align-self: flex-end;
-}
-
-.bot-message {
-    background: #f1f3f5;
-    color: #212529;
-    margin-right: auto;
-    align-self: flex-start;
-}
-
-.message-text {
-    line-height: 1.5;
-}
-
-.message-files {
-    margin-bottom: 8px;
-}
-
-.message-file-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    margin: 4px 0;
-}
-
-.user-message .message-file-item {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.bot-message .message-file-item {
-    background: rgba(0, 0, 0, 0.05);
-}
-
-.file-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.file-name {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.file-size {
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-/* Typing indicator */
-.typing-indicator {
-    display: flex;
-    gap: 4px;
-    padding: 8px 0;
-}
-
-.typing-indicator span {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #6c757d;
-    animation: typing 1.4s infinite;
-}
-
-.typing-indicator span:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.typing-indicator span:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-@keyframes typing {
-    0%, 60%, 100% {
-        opacity: 0.3;
-        transform: translateY(0);
-    }
-    30% {
-        opacity: 1;
-        transform: translateY(-10px);
-    }
-}
-
-.download-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: #28a745;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: background 0.2s;
-}
-
-.download-link:hover {
-    background: #218838;
-    color: white;
-}
-</style>
 {% endblock %}
 
 {% block body %}
@@ -150,6 +32,11 @@
             <div class="sidebar-icon" data-tooltip="Settings">
                 <i class="bi bi-gear"></i>
             </div>
+            
+            <!-- Rulers Icon -->
+            <!-- <div class="sidebar-icon" data-tooltip="">
+                <i class="bi bi-rulers"></i>
+            </div> -->
             
             <div class="sidebar-bottom">
                 <!-- User Avatar -->
@@ -289,12 +176,12 @@
 
             <!-- Chat Area -->
             <div class="chat-area" id="chatArea">
-                <!-- Messages will be dynamically created here -->
+                <!-- Tender upload section will be dynamically created here -->
             </div>
 
             <!-- Input Area -->
             <div class="input-container">
-                <form id="fileUploadForm" method="POST" enctype="multipart/form-data">
+                <form id="fileUploadForm" method="POST" enctype="multipart/form-data" action="{% url 'chatapp:chat' %}">
                     {% csrf_token %}
                     <div class="file-preview" id="filePreview"></div>
                     <div class="input-wrapper">
@@ -305,7 +192,7 @@
                         <textarea 
                             class="message-input" 
                             id="messageInput" 
-                            placeholder="Let's do our work together..."
+                            placeholder="Lets do our work together..."
                             rows="1"></textarea>
                         <button class="send-btn" id="sendBtn" type="submit">
                             <i class="bi bi-send-fill"></i>
