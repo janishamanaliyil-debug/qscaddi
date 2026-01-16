@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
@@ -9,6 +9,11 @@ from .boq_merger import BOQMerger  # Your merger class
 def index(request):
     return render(request, 'chatapp/index.html')
 
+
+def chat(request):
+    if request.method == "POST":
+        return HttpResponse("Chat POST endpoint")
+    return render(request, 'chatapp/chat.html')
 def Login(request):
     return render(request, 'chatapp/login.html')
 

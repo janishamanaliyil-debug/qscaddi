@@ -181,23 +181,14 @@
 
             <!-- Input Area -->
             <div class="input-container">
-                <form id="fileUploadForm" method="POST" enctype="multipart/form-data" action="{% url 'chatapp:chat' %}">
+                <form id="" method="POST"  action="{% url 'chatapp:chat' %}">
                     {% csrf_token %}
-                    <div class="file-preview" id="filePreview"></div>
-                    <div class="input-wrapper">
-                        <input type="file" name="files" id="fileInput" style="display: none;" multiple>
-                        <button type="button" class="file-input-btn" onclick="document.getElementById('fileInput').click()">
-                            <i class="bi bi-plus-lg"></i>
-                        </button>
-                        <textarea 
-                            class="message-input" 
-                            id="messageInput" 
-                            placeholder="Lets do our work together..."
-                            rows="1"></textarea>
-                        <button class="send-btn" id="sendBtn" type="submit">
-                            <i class="bi bi-send-fill"></i>
-                        </button>
-                    </div>
+                   
+                        <input type="text">
+
+
+<input type="submit" value="Send">
+                  
                 </form>
             </div>
         </div>
@@ -205,9 +196,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    // Define the tender analysis URL from Django
-    const TENDER_ANALYSIS_URL = "{% url 'chatapp:tender_analysis' %}";
-</script>
-<script src="{% static 'js/index.js' %}"></script>
+
+<!-- <script src="{% static 'js/index.js' %}"></script> -->
 {% endblock %}
