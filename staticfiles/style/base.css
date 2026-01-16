@@ -1,0 +1,27 @@
+
+
+/* Global Colors */
+:root {
+    --primary-gradient-start: #667eea;
+    --primary-gradient-end: #764ba2;
+    --accent-color: #57b846;
+    --background-light: #f8f9fa;
+}
+
+/* Body default */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Utility classes */
+.text-primary-gradient {
+    background: linear-gradient(180deg, var(--primary-gradient-start), var(--primary-gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(180deg, var(--primary-gradient-start), var(--primary-gradient-end));
+}
