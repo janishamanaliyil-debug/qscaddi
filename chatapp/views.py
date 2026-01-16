@@ -42,8 +42,16 @@ def tender_analysis(request):
             }, status=400)
         
         # Setup file storage
-        upload_dir = os.path.join(settings.MEDIA_ROOT, 'tender_uploads')
+        # upload_dir = os.path.join(settings.MEDIA_ROOT, 'tender_uploads')
+        # os.makedirs(upload_dir, exist_ok=True)
+
+        # Old code:
+# upload_dir = os.path.join(settings.MEDIA_ROOT, 'tender_uploads')
+
+# Change to this:
+        upload_dir = os.path.join('/tmp', 'tender_uploads')
         os.makedirs(upload_dir, exist_ok=True)
+
         
         fs = FileSystemStorage(location=upload_dir)
         saved_paths = []

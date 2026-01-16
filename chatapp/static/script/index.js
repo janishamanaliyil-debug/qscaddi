@@ -575,7 +575,8 @@ document.addEventListener('DOMContentLoaded', function() {
             method: "POST",
             body: formData,
             headers: {
-                "X-CSRFToken": csrfToken ? csrfToken.value : ''
+                // "X-CSRFToken": csrfToken ? csrfToken.value : ''
+                 "X-CSRFToken": csrfToken
             }
         })
         .then(res => res.json())
