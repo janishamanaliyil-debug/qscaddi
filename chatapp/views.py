@@ -226,6 +226,7 @@ from django.conf import settings
 import os
 from .boq_merger import BOQMerger  # Your merger class
 
+
 def index(request):
     return render(request, 'chatapp/index.html')
 

@@ -5,10 +5,13 @@
 {% endblock %}
 
 {% block body %}
- <div class="app-container">
+<div class="app-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
-            
+            <!-- Home Icon -->
+            <div class="sidebar-icon" data-tooltip="Home">
+                <i class="bi bi-house"></i>
+            </div>
             
             <!-- Project Icon with Submenu -->
             <div class="sidebar-icon has-submenu" data-tooltip="Project" id="projectIcon">
@@ -19,10 +22,7 @@
             <div class="sidebar-icon" data-tooltip="Templates">
                 <i class="bi bi-upload"></i>
             </div>
-            <!-- Home Icon -->
-            <div class="sidebar-icon" data-tooltip="Home">
-                <i class="bi bi-house"></i>
-            </div>
+            
             <!-- Integrations Icon -->
             <div class="sidebar-icon" data-tooltip="Integrations">
                 <i class="bi bi-link"></i>
@@ -168,11 +168,11 @@
         <div class="main-content">
             <!-- Header -->
             <div class="header">
-                <div class="app-name">QS Copilot</div>
+                <div class="app-name">QS CoPilot</div>
             </div>
 
             <!-- Center Greeting -->
-            <div class="center-greeting" id="centerGreeting">Hi</div>
+            <div class="center-greeting" id="centerGreeting">Where should we begin?</div>
 
             <!-- Chat Area -->
             <div class="chat-area" id="chatArea">
@@ -192,7 +192,7 @@
                         <textarea 
                             class="message-input" 
                             id="messageInput" 
-                            placeholder="Ask me..."
+                            placeholder="Lets do our work together..."
                             rows="1"></textarea>
                         <button class="send-btn" id="sendBtn" type="submit">
                             <i class="bi bi-send-fill"></i>
