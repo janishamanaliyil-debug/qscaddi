@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.core.files.storage import FileSystemStorage
@@ -5,11 +6,7 @@ from django.conf import settings
 import os
 import ollama
 from .boq_merger import BOQMerger
-from . import qs_config
-
-# Store conversation history (in production, use database or session)
-# Format: {session_id: [messages]}
-conversation_memory = {}
+from . import qs_config  # Import configuration
 
 
 def index(request):
@@ -17,32 +14,25 @@ def index(request):
     Main page - handles both GET (display) and POST (chat with Ollama)
     """
     if request.method == "POST":
-        # Handle chat on the index page
         return chat(request)
     return render(request, 'chatapp/index.html')
 
 
 def chat(request):
     """
-    Handle regular chat messages with Ollama with conversation memory
+    Handle chat messages with Ollama - OPTIMIZED FOR SPEED
     """
     if request.method == "POST":
         message = request.POST.get("message", "").strip()
         files = request.FILES.getlist("files")
         
-        # Get or create session ID (using session framework)
-        if not request.session.session_key:
-            request.session.create()
-        session_id = request.session.session_key
-        
         print(f"\n{'='*60}")
-        print(f"💬 CHAT REQUEST RECEIVED")
+        print(f"💬 CHAT REQUEST")
         print(f"{'='*60}")
-        print(f"Session ID: {session_id}")
         print(f"Message: '{message}'")
         print(f"Files: {len(files)}")
         
-        # Handle file uploads if present
+        # Handle file uploads
         uploaded_files_info = []
         if files:
             upload_dir = os.path.join(settings.MEDIA_ROOT, 'chat_uploads')
@@ -58,106 +48,61 @@ def chat(request):
                 })
                 print(f"  ✓ Uploaded: {file.name}")
         
-        # Prepare context for Ollama
+        # Prepare message
         if uploaded_files_info:
             file_context = f"\n\nUser uploaded {len(uploaded_files_info)} file(s): " + \
                           ", ".join([f['name'] for f in uploaded_files_info])
-            full_message = message + file_context if message else f"I uploaded these files: {file_context}"
+            full_message = message + file_context if message else file_context
         else:
             full_message = message
         
         if not full_message:
-            print("❌ No message provided")
             return JsonResponse({
                 "success": False,
                 "response": "Please provide a message or upload files."
             })
         
         try:
-            # Initialize conversation history for this session
-            if session_id not in conversation_memory:
-                conversation_memory[session_id] = []
+            # Call Ollama with FAST settings
+            print(f"🤖 Calling Ollama (Model: {qs_config.OLLAMA_MODEL})...")
             
-            # Get conversation history
-            history = conversation_memory[session_id]
-            
-            # Build messages array with system prompt and history
-            messages = [
-                {
-                    'role': 'system',
-                    'content': qs_config.QS_SYSTEM_PROMPT,
-                }
-            ]
-            
-            # Add conversation history (limited to MAX_CONVERSATION_HISTORY)
-            max_history = qs_config.MAX_CONVERSATION_HISTORY
-            if len(history) > max_history:
-                history = history[-max_history:]
-            
-            messages.extend(history)
-            
-            # Add current user message
-            messages.append({
-                'role': 'user',
-                'content': full_message,
-            })
-            
-            print(f"\n🤖 Calling Ollama (Model: {qs_config.OLLAMA_MODEL})...")
-            print(f"Conversation history: {len(history)} messages")
-            print(f"Current message: {full_message[:200]}...")
-            
-            # Call Ollama API
             response = ollama.chat(
                 model=qs_config.OLLAMA_MODEL,
-                messages=messages,
-                options=qs_config.OLLAMA_OPTIONS
+                messages=[
+                    {
+                        'role': 'system',
+                        'content': qs_config.QS_SYSTEM_PROMPT,  # Uses FAST prompt
+                    },
+                    {
+                        'role': 'user',
+                        'content': full_message,
+                    },
+                ],
+                options=qs_config.OLLAMA_OPTIONS  # Speed optimizations
             )
             
             bot_response = response['message']['content']
             
-            # Save to conversation history
-            conversation_memory[session_id].append({
-                'role': 'user',
-                'content': full_message
-            })
-            conversation_memory[session_id].append({
-                'role': 'assistant',
-                'content': bot_response
-            })
-            
-            print(f"✅ Ollama Response received (length: {len(bot_response)})")
-            print(f"Response preview: {bot_response[:200]}...")
-            print(f"Total messages in history: {len(conversation_memory[session_id])}")
+            print(f"✅ Response received ({len(bot_response)} chars)")
             print(f"{'='*60}\n")
             
             return JsonResponse({
                 "success": True,
                 "response": bot_response,
-                "uploaded_files": uploaded_files_info,
-                "conversation_length": len(conversation_memory[session_id])
+                "uploaded_files": uploaded_files_info
             })
             
         except Exception as e:
-            print(f"❌ Ollama Error: {str(e)}")
-            print(f"Error type: {type(e).__name__}")
+            print(f"❌ Error: {str(e)}")
             import traceback
             traceback.print_exc()
             
             return JsonResponse({
                 "success": False,
-                "response": f"Sorry, I encountered an error: {str(e)}\n\nMake sure Ollama is running: ollama serve"
+                "response": f"Error: {str(e)}\n\nMake sure Ollama is running: ollama serve"
             }, status=500)
     
     return render(request, 'chatapp/chat.html')
-
-
-def clear_chat_history(request):
-    """
-    Clear conversation history for current session
-    """
-    if request.session.session_key in conversation_memory:
-        del conversation_memory[request.session.session_key]
-    return JsonResponse({"success": True, "message": "Chat history cleared"})
 
 
 def Login(request):
@@ -174,7 +119,7 @@ def tender_analysis(request):
 
     if request.method == "POST":
         print("\n" + "="*60)
-        print("📥 TENDER ANALYSIS REQUEST RECEIVED")
+        print("📥 TENDER ANALYSIS REQUEST")
         print("="*60)
         
         message = request.POST.get("message", "")
