@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'chatapp',
+    'accounts',
     
 ]
 
@@ -91,7 +92,7 @@ if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'qscaddie',   
+            'NAME': 'qscaddie_db',   
             'USER': 'postgres',       
             'PASSWORD': 'qs@#NWS321',   
             'HOST': 'localhost',          
@@ -181,4 +182,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
 
