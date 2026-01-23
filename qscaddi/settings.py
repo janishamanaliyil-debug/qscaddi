@@ -87,8 +87,19 @@ WSGI_APPLICATION = 'qscaddi.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 import dj_database_url
-
-DATABASES = {
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'qscaddie',   
+            'USER': 'postgres',       
+            'PASSWORD': 'qs@#NWS321',   
+            'HOST': 'localhost',          
+            'PORT': '5432',  
+        }
+    }
+else:
+    DATABASES = {
     'default': dj_database_url.parse('postgresql://qscaddi_db_user:ScKgjUq0D2FXxXI5wNzQt39ENVv1NK7P@dpg-d5jk0t15pdvs739gffhg-a.oregon-postgres.render.com/qscaddi_db')
         
         # conn_max_age=600,
@@ -102,6 +113,7 @@ DATABASES = {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
+
 # }
 #  "default": dj_database_url.parse(
 #         DATABASE_URL,

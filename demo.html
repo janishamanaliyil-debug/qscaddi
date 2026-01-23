@@ -1,223 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>QSCoPilot</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      margin:0;
-      font-family: Arial, sans-serif;
-      background:#f7f9fc;
-      display:flex;
-      flex-direction:column;
-      height:100vh;
-      color:#1a1a1a;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      padding: 40px 20px;
     }
 
-    /* Context Bar */
-    .context-bar {
-      background:#181c30;
-      color:white;
-      padding:12px 20px;
-      font-size:14px;
-      display:flex;
-      align-items:center;
-      gap:20px;
-      border-bottom:2px solid #272c45;
+    .timeline-wrapper {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 0 120px;
     }
 
-    .context-item {
-      display:flex;
-      flex-direction:column;
+    /* Year indicator fixed to viewport */
+    #year_in_timeline {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 24px;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
     }
 
-    .context-label {
-      font-size:11px;
-      opacity:0.7;
+    /* Center line */
+    /* Center line - base grey color */
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 100%;
+      background: #d0d0d0;
+      top: 0;
     }
 
-    /* Main Layout */
-    .main {
-      flex:1;
-      display:flex;
-      overflow:hidden;
+    /* Active/filled portion of timeline - black color */
+    .timeline::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      background: linear-gradient(180deg, #2c3e50 0%, #000000 100%);
+      top: 0;
+      height: 0%;
+      transition: height 0.3s ease;
+      z-index: 1;
     }
 
-    /* Chat Section */
-    .chat-section {
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      border-right:1px solid #d6d9e1;
+    .timeline {
+      position: relative;
+      padding: 40px 0;
     }
 
-    .chat-area {
-      flex:1;
-      padding:20px;
-      overflow-y:auto;
+    .timeline-item {
+      position: relative;
+      margin-bottom: 80px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.6s ease forwards;
     }
 
-    .message {
-      padding:12px 14px;
-      margin-bottom:12px;
-      border-radius:6px;
-      max-width:75%;
-      font-size:14px;
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .from-user {
-      background:#e1e9ff;
-      margin-left:auto;
+    /* Left side items */
+    .timeline-item.left {
+      flex-direction: row;
+      justify-content: flex-end;
+      padding-right: calc(50% + 30px);
     }
 
-    .from-system {
-      background:#f1f3f7;
-      margin-right:auto;
+    /* Right side items */
+    .timeline-item.right {
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      padding-left: calc(50% + 30px);
     }
 
-    /* Command Line Input */
-    .command-input {
-      display:flex;
-      border-top:1px solid #d6d9e1;
-      padding:14px;
-      gap:10px;
-      background:#fff;
+    /* Content box */
+    .timeline-content {
+      flex: 1;
+      max-width: 450px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
-    .command-input textarea {
-      flex:1;
-      resize:none;
-      border:1px solid #c7ccdb;
-      border-radius:6px;
-      padding:10px;
-      font-size:14px;
-      height:42px;
-      outline:none;
+    .timeline-content:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
     }
 
-    .command-input button {
-      background:#5064d8;
-      color:white;
-      border:none;
-      padding:0 20px;
-      border-radius:6px;
-      cursor:pointer;
-      font-size:14px;
+    /* Arrow pointing to center line */
+    .timeline-content.left::after {
+      content: '';
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 20px solid white;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
     }
 
-    /* Upload Panel */
-    .upload-panel {
-      width:260px;
-      background:#fafbff;
-      padding:18px;
-      display:flex;
-      flex-direction:column;
-      border-left:1px solid #d6d9e1;
+    .timeline-content.right::after {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-right: 20px solid white;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
     }
 
-    .upload-title {
-      font-weight:600;
-      margin-bottom:12px;
-      font-size:14px;
+    /* Image container */
+    .timeline-img {
+      flex: 1;
+      max-width: 350px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
     }
 
-    .upload-category {
-      margin-bottom:18px;
+    .timeline-img:hover {
+      transform: scale(1.05);
     }
 
-    .upload-category span {
-      display:block;
-      font-size:12px;
-      opacity:0.7;
-      margin-bottom:6px;
+    .timeline-img img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      display: block;
     }
 
-    .upload-box {
-      border:1px dashed #a9b0c3;
-      border-radius:6px;
-      padding:20px;
-      text-align:center;
-      font-size:12px;
-      cursor:pointer;
-      background:#fff;
+    /* Center dot */
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      background: white;
+      border: 4px solid #333333;
+      border-radius: 50%;
+      z-index: 10;
+      box-shadow: 0 0 0 4px rgba(51, 51, 51, 0.2);
     }
 
+    .timeline-content p {
+      color: #555;
+      line-height: 1.8;
+      font-size: 16px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+
+    /* Tablet Responsive (iPad and similar) */
+    @media (max-width: 1024px) {
+      .timeline-wrapper {
+        padding: 40px 20px 120px;
+      }
+
+      .timeline-item {
+        gap: 30px;
+        margin-bottom: 60px;
+      }
+
+      .timeline-content {
+        max-width: 400px;
+        padding: 25px;
+      }
+
+      .timeline-img {
+        max-width: 300px;
+      }
+
+      .timeline-img img {
+        height: 250px;
+      }
+    }
+
+    /* Tablet Portrait & Small Tablets */
+    @media (max-width: 968px) {
+      .timeline::before {
+        left: 30px;
+      }
+
+      .timeline::after {
+        left: 30px;
+      }
+
+      .timeline-item {
+        margin-bottom: 50px;
+      }
+
+      .timeline-item.left,
+      .timeline-item.right {
+        flex-direction: column;
+        padding-left: 70px;
+        padding-right: 0;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 20px;
+      }
+
+      .timeline-item::before {
+        left: 30px;
+        transform: translateX(-50%);
+      }
+
+      .timeline-content.left::after,
+      .timeline-content.right::after {
+        left: -20px;
+        right: auto;
+        border-right: 20px solid white;
+        border-left: none;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+      }
+
+      .timeline-content,
+      .timeline-img {
+        max-width: 100%;
+        width: 100%;
+        min-width: 0;
+      }
+
+      .timeline-img img {
+        height: 280px;
+      }
+
+      #year_in_timeline {
+        font-size: 20px;
+        padding: 10px 20px;
+        top: 15px;
+        right: 15px;
+      }
+    }
+
+    /* Mobile Landscape & Large Phones */
+    @media (max-width: 768px) {
+      .timeline-wrapper {
+        padding: 30px 15px 100px;
+      }
+
+      .timeline {
+        padding: 30px 0;
+      }
+
+      .timeline-item {
+        padding-left: 60px;
+        margin-bottom: 40px;
+        min-width: 0;
+        overflow: visible;
+      }
+
+      .timeline::before {
+        left: 25px;
+        width: 3px;
+      }
+
+      .timeline::after {
+        left: 25px;
+        width: 3px;
+      }
+
+      .timeline-item::before {
+        left: 25px;
+        width: 16px;
+        height: 16px;
+        border-width: 3px;
+      }
+
+      .timeline-content {
+        padding: 20px;
+        font-size: 15px;
+      }
+
+      .timeline-content p {
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .timeline-img img {
+        height: 240px;
+      }
+
+      #year_in_timeline {
+        font-size: 18px;
+        padding: 8px 18px;
+      }
+    }
+
+    /* Mobile Portrait */
+    @media (max-width: 576px) {
+      .timeline-wrapper {
+        padding: 20px 10px 80px;
+      }
+
+      .timeline {
+        padding: 20px 0;
+      }
+
+      .timeline-item {
+        padding-left: 50px;
+        margin-bottom: 35px;
+        gap: 15px;
+      }
+
+      .timeline::before {
+        left: 20px;
+        width: 2px;
+      }
+
+      .timeline::after {
+        left: 20px;
+        width: 2px;
+      }
+
+      .timeline-item::before {
+        left: 20px;
+        width: 14px;
+        height: 14px;
+        border-width: 3px;
+      }
+
+      .timeline-content {
+        padding: 18px;
+        border-radius: 10px;
+      }
+
+      .timeline-content p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .timeline-content.left::after,
+      .timeline-content.right::after {
+        left: -15px;
+        border-right-width: 15px;
+        border-top: 12px solid transparent;
+        border-bottom: 12px solid transparent;
+      }
+
+      .timeline-img {
+        border-radius: 10px;
+      }
+
+      .timeline-img img {
+        height: 200px;
+      }
+
+      #year_in_timeline {
+        top: 10px;
+        right: 10px;
+        font-size: 16px;
+        padding: 8px 16px;
+        border-radius: 6px;
+      }
+    }
+
+    /* Extra Small Mobile */
+    @media (max-width: 375px) {
+      .timeline-wrapper {
+        padding: 15px 8px 70px;
+      }
+
+      .timeline-item {
+        padding-left: 45px;
+        margin-bottom: 30px;
+      }
+
+      .timeline::before {
+        left: 18px;
+      }
+
+      .timeline::after {
+        left: 18px;
+      }
+
+      .timeline-item::before {
+        left: 18px;
+        width: 12px;
+        height: 12px;
+      }
+
+      .timeline-content {
+        padding: 15px;
+      }
+
+      .timeline-content p {
+        font-size: 13px;
+      }
+
+      .timeline-img img {
+        height: 180px;
+      }
+
+      #year_in_timeline {
+        font-size: 14px;
+        padding: 6px 12px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Context Bar -->
-  <div class="context-bar">
-    <div class="context-item">
-      <span class="context-label">Project</span>
-      <strong>Dubai Mall Extension</strong>
+<div class="timeline-wrapper" id="timeline_section">
+  <!-- Year box at the top right -->
+  <div id="year_in_timeline">2006</div>
+
+  <!-- Timeline items -->
+  <div class="timeline">
+
+    <div class="timeline-item left" data-year="2006">
+      <div class="timeline-content left">
+        <p>NWS International is awarded its first project to produce Bill of Quantities for the iconic Al Fattan Currency House in DIFC</p>
+      </div>
+      <div class="timeline-img">
+        <img src="https://staging.nwsint.com/wp/wp-content/uploads/2026/01/brooke-cagle-uHVRvDr7pg-unsplash-scaled.jpg" alt="2006 Project" />
+      </div>
     </div>
-    <div class="context-item">
-      <span class="context-label">Stage</span>
-      <strong>Tender Analysis</strong>
+
+    <div class="timeline-item right" data-year="2007">
+      <div class="timeline-content right">
+        <p>The firm is awarded its first project in Oman, and its first project outside of the UAE</p>
+      </div>
+      <div class="timeline-img">
+        <img src="https://staging.nwsint.com/wp/wp-content/uploads/2026/01/brooke-cagle-uHVRvDr7pg-unsplash-scaled.jpg" alt="2007 Project" />
+      </div>
     </div>
-    <div class="context-item">
-      <span class="context-label">Template</span>
-      <strong>BOQ Breakdown v2</strong>
+
+    <div class="timeline-item left" data-year="2008">
+      <div class="timeline-content left">
+        <p>Content will be filled soon</p>
+      </div>
+      <div class="timeline-img">
+        <img src="https://staging.nwsint.com/wp/wp-content/uploads/2026/01/brooke-cagle-uHVRvDr7pg-unsplash-scaled.jpg" alt="2008 Project" />
+      </div>
     </div>
-    <div class="context-item">
-      <span class="context-label">Status</span>
-      <strong>Active</strong>
+
+    <div class="timeline-item right" data-year="2016">
+      <div class="timeline-content right">
+        <p>Bryan Scatterty celebrates 10 years with the firm as Director having established the office in 2006</p>
+      </div>
+      <div class="timeline-img">
+        <img src="https://staging.nwsint.com/wp/wp-content/uploads/2026/01/brooke-cagle-uHVRvDr7pg-unsplash-scaled.jpg" alt="2016 Milestone" />
+      </div>
     </div>
+
+    <div class="timeline-item left" data-year="2018">
+      <div class="timeline-content left">
+        <p>NWS International as the appointed cost consultant marks the completion of Mediclinic's Parkview Hospital</p>
+      </div>
+      <div class="timeline-img">
+        <img src="https://staging.nwsint.com/wp/wp-content/uploads/2026/01/brooke-cagle-uHVRvDr7pg-unsplash-scaled.jpg" alt="2018 Project" />
+      </div>
+    </div>
+
+    <div class="timeline-item right" data-year="2020">
+      <div class="timeline-content right">
+        <p>Gerard Barron joins NWS International as Managing Director bringing a wealth of experience and knowledge</p>
+      </div>
+      <div class="timeline-img">
+        <img src="https://staging.nwsint.com/wp/wp-content/uploads/2026/01/brooke-cagle-uHVRvDr7pg-unsplash-scaled.jpg" alt="2020 Leadership" />
+      </div>
+    </div>
+    
+    <div class="timeline-item left" data-year="2026">
+      <div class="timeline-content left">
+        <p>NWS International celebrates 20 years in the region</p>
+      </div>
+      <div class="timeline-img">
+        <img src="https://staging.nwsint.com/wp/wp-content/uploads/2026/01/brooke-cagle-uHVRvDr7pg-unsplash-scaled.jpg" alt="2026 Anniversary" />
+      </div>
+    </div>
+
   </div>
+</div>
 
-  <div class="main">
+<script>
+document.addEventListener("scroll", function() {
+  const timelineWrapper = document.getElementById("timeline_section");
+  const timeline = timelineWrapper.querySelector(".timeline");
+  const items = timelineWrapper.querySelectorAll(".timeline-item");
+  const yearBox = document.getElementById("year_in_timeline");
 
-    <!-- Chat Section -->
-    <div class="chat-section">
-      <div class="chat-area" id="chatArea">
-        <div class="message from-system">Welcome to QSCoPilot. Start working by entering a task or uploading documents.</div>
-      </div>
-      <div class="command-input">
-        <textarea placeholder="Enter a professional command, e.g. 'Break down BOQ by trade'" id="command"></textarea>
-        <button onclick="sendMessage()">Execute</button>
-      </div>
-    </div>
+  const wrapperRect = timelineWrapper.getBoundingClientRect();
 
-    <!-- Upload Panel -->
-    <div class="upload-panel">
-      <div class="upload-title">Upload Documents</div>
+  // Show year only if timeline section is in viewport
+  if (wrapperRect.bottom > 0 && wrapperRect.top < window.innerHeight) {
+    yearBox.style.display = "block";
+  } else {
+    yearBox.style.display = "none";
+    return;
+  }
 
-      <div class="upload-category">
-        <span>Drawings / Models</span>
-        <div class="upload-box">Upload PDFs, DWGs, IFC, CAD</div>
-      </div>
+  let currentYear = items[0].getAttribute("data-year");
 
-      <div class="upload-category">
-        <span>BOQs / Schedules</span>
-        <div class="upload-box">Upload XLSX, CSV</div>
-      </div>
+  // Calculate scroll progress for timeline fill
+  const timelineRect = timeline.getBoundingClientRect();
+  const windowHeight = window.innerHeight;
+  const timelineTop = timelineRect.top + window.pageYOffset;
+  const timelineHeight = timelineRect.height;
+  const scrollTop = window.pageYOffset;
+  
+  // Calculate progress based on scroll position
+  let progress = ((scrollTop + windowHeight - timelineTop) / timelineHeight) * 100;
+  progress = Math.max(0, Math.min(100, progress)); // Clamp between 0-100
+  
+  // Apply the progress directly to the timeline element
+  const timelineAfter = timeline;
+  if (timelineAfter) {
+    timelineAfter.style.setProperty('--timeline-progress', progress + '%');
+  }
 
-      <div class="upload-category">
-        <span>Templates</span>
-        <div class="upload-box">Upload DOCX, XLSX</div>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    function sendMessage() {
-      const input = document.getElementById("command");
-      const chatArea = document.getElementById("chatArea");
-
-      if (input.value.trim() === "") return;
-
-      const msg = document.createElement("div");
-      msg.className = "message from-user";
-      msg.innerText = input.value;
-      chatArea.appendChild(msg);
-
-      input.value = "";
-      chatArea.scrollTop = chatArea.scrollHeight;
+  items.forEach(item => {
+    const rect = item.getBoundingClientRect();
+    if (rect.top < window.innerHeight / 2) {
+      currentYear = item.getAttribute("data-year");
     }
-  </script>
+  });
+
+  yearBox.innerText = currentYear;
+});
+
+// Trigger on page load
+window.addEventListener('load', function() {
+  document.dispatchEvent(new Event('scroll'));
+});
+</script>
 
 </body>
 </html>
